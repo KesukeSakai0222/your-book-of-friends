@@ -835,6 +835,11 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final $EventsTable events = $EventsTable(this);
   late final $TagsTable tags = $TagsTable(this);
   late final $FriendTagsTable friendTags = $FriendTagsTable(this);
+  late final FriendsDao friendsDao = FriendsDao(this as MyDatabase);
+  late final NamesDao namesDao = NamesDao(this as MyDatabase);
+  late final EventsDao eventsDao = EventsDao(this as MyDatabase);
+  late final TagsDao tagsDao = TagsDao(this as MyDatabase);
+  late final FriendTagsDao friendTagsDao = FriendTagsDao(this as MyDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

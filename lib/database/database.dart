@@ -5,28 +5,26 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-import '../model/event.dart';
-import '../model/friend.dart';
-import '../model/name.dart';
-import '../model/tag.dart';
-import '../model/friend_tag.dart';
+import 'package:your_book_of_friends/dao/events_dao.dart';
+import 'package:your_book_of_friends/dao/friend_tags_dao.dart';
+import 'package:your_book_of_friends/dao/friends_dao.dart';
+import 'package:your_book_of_friends/dao/names_dao.dart';
+import 'package:your_book_of_friends/dao/tags_dao.dart';
+import 'package:your_book_of_friends/model/event.dart';
+import 'package:your_book_of_friends/model/friend.dart';
+import 'package:your_book_of_friends/model/name.dart';
+import 'package:your_book_of_friends/model/tag.dart';
+import 'package:your_book_of_friends/model/friend_tag.dart';
 part 'database.g.dart';
 
-@DriftDatabase(tables: [Friends, Names, Events, Tags, FriendTags])
+@DriftDatabase(
+    tables: [Friends, Names, Events, Tags, FriendTags],
+    daos: [FriendsDao, NamesDao, EventsDao, TagsDao, FriendTagsDao])
 class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
-
-  // Friend Operation
-  // Stream<List<Friend>> watchFriends() => select(friends).watch();
-  // Future insFriend(Friend f) {
-  //   return into(friends).insert(f);
-  // }
-  // Future<List<Name>>
-  // Stream<List<Tag>> watchTags() => select(tags).watch();
-
 }
 
 LazyDatabase _openConnection() {

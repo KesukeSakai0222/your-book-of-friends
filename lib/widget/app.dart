@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:your_book_of_friends/define/classification.dart';
+import 'package:provider/provider.dart';
+import 'package:your_book_of_friends/widget/bottom_bar.dart';
+
+import 'add_button.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -12,36 +15,25 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  var _selectedIndex = 0;
+  final _selectedIndex = SelectedIndex();
+  final _bottomBar = const BottomBar();
+  final _addButton = const AddButton();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: CustomScrollView(slivers: <Widget>[
-          SliverAppBar(
-              floating: true,
-              title: Text(AppLocalizations.of(context)!.title,
-                  style: GoogleFonts.hinaMincho(fontWeight: FontWeight.bold)),
-              centerTitle: true),
-          _contents[_selectedIndex],
-        ]),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.people),
-              label: AppLocalizations.of(context)!.friend,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.event),
-              label: AppLocalizations.of(context)!.event,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.search),
-              label: AppLocalizations.of(context)!.search,
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onTapItem,
+    return ChangeNotifierProvider<SelectedIndex>.value(
+        value: _selectedIndex,
+        child: Scaffold(
+          body: CustomScrollView(slivers: <Widget>[
+            SliverAppBar(
+                title: Text(AppLocalizations.of(context)!.title,
+                    style: GoogleFonts.hinaMincho(fontWeight: FontWeight.bold)),
+                floating: true,
+                centerTitle: true),
+            _contents[_selectedIndex.index],
+          ]),
+          bottomNavigationBar: _bottomBar,
+          floatingActionButton: _addButton,
         ));
   }
 
@@ -56,8 +48,13 @@ class AppState extends State<App> {
         )
     ]))
   ];
+}
 
-  void _onTapItem(int index) {
-    setState(() => _selectedIndex = index);
+class SelectedIndex extends ChangeNotifier {
+  var index = 0;
+
+  void setIndex(int index) {
+    this.index = index;
+    notifyListeners();
   }
 }
