@@ -12,20 +12,20 @@ class Friend implements Insertable<Friend> {
   final String? memo;
   final DateTime? birthday;
   final bool isNotify;
-  final String? location;
+  final String? address;
+  final String? occupation;
 
   // コンストラクタ
-  Friend(this.id, this.memo, this.birthday, this.isNotify, this.location) {
+  Friend(this.id, this.memo, this.birthday, this.isNotify, this.address,
+      this.occupation) {
     names = <Name>[];
     events = <Event>[];
     tags = <Tag>[];
   }
 
   // 新規作成
-  Friend.init(String name, this.tags, this.memo, this.birthday, this.isNotify,
-      this.location) {
-    names = <Name>[];
-    names.add(Name.init(id!, name, true));
+  Friend.init(this.names, this.tags, this.memo, this.birthday, this.isNotify,
+      this.address, this.occupation) {
     events = <Event>[];
   }
 
@@ -35,9 +35,17 @@ class Friend implements Insertable<Friend> {
             memo: Value(memo),
             birthday: Value(birthday),
             isNotify: Value(isNotify),
-            location: Value(location))
+            address: Value(address),
+            occupation: Value(occupation))
         .toColumns(nullToAbsent);
   }
+}
+
+class FriendWithMainName {
+  final Friend friend;
+  final Name mainName;
+
+  FriendWithMainName(this.friend, this.mainName);
 }
 
 @UseRowClass(Friend)
@@ -46,5 +54,6 @@ class Friends extends Table {
   TextColumn get memo => text().nullable()();
   DateTimeColumn get birthday => dateTime().nullable()();
   BoolColumn get isNotify => boolean().withDefault(const Constant(false))();
-  TextColumn get location => text().nullable()();
+  TextColumn get address => text().nullable()();
+  TextColumn get occupation => text().nullable()();
 }

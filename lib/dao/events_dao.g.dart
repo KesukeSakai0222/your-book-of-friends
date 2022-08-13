@@ -8,4 +8,6 @@ part of 'events_dao.dart';
 
 mixin _$EventsDaoMixin on DatabaseAccessor<MyDatabase> {
   $EventsTable get events => attachedDatabase.events;
+  $FriendsTable get friends => attachedDatabase.friends;
+  $NamesTable get names => attachedDatabase.names;
 }

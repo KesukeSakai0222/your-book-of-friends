@@ -12,34 +12,39 @@ class FriendsCompanion extends UpdateCompanion<Friend> {
   final Value<String?> memo;
   final Value<DateTime?> birthday;
   final Value<bool> isNotify;
-  final Value<String?> location;
+  final Value<String?> address;
+  final Value<String?> occupation;
   const FriendsCompanion({
     this.id = const Value.absent(),
     this.memo = const Value.absent(),
     this.birthday = const Value.absent(),
     this.isNotify = const Value.absent(),
-    this.location = const Value.absent(),
+    this.address = const Value.absent(),
+    this.occupation = const Value.absent(),
   });
   FriendsCompanion.insert({
     this.id = const Value.absent(),
     this.memo = const Value.absent(),
     this.birthday = const Value.absent(),
     this.isNotify = const Value.absent(),
-    this.location = const Value.absent(),
+    this.address = const Value.absent(),
+    this.occupation = const Value.absent(),
   });
   static Insertable<Friend> custom({
     Expression<int>? id,
     Expression<String?>? memo,
     Expression<DateTime?>? birthday,
     Expression<bool>? isNotify,
-    Expression<String?>? location,
+    Expression<String?>? address,
+    Expression<String?>? occupation,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (memo != null) 'memo': memo,
       if (birthday != null) 'birthday': birthday,
       if (isNotify != null) 'is_notify': isNotify,
-      if (location != null) 'location': location,
+      if (address != null) 'address': address,
+      if (occupation != null) 'occupation': occupation,
     });
   }
 
@@ -48,13 +53,15 @@ class FriendsCompanion extends UpdateCompanion<Friend> {
       Value<String?>? memo,
       Value<DateTime?>? birthday,
       Value<bool>? isNotify,
-      Value<String?>? location}) {
+      Value<String?>? address,
+      Value<String?>? occupation}) {
     return FriendsCompanion(
       id: id ?? this.id,
       memo: memo ?? this.memo,
       birthday: birthday ?? this.birthday,
       isNotify: isNotify ?? this.isNotify,
-      location: location ?? this.location,
+      address: address ?? this.address,
+      occupation: occupation ?? this.occupation,
     );
   }
 
@@ -73,8 +80,11 @@ class FriendsCompanion extends UpdateCompanion<Friend> {
     if (isNotify.present) {
       map['is_notify'] = Variable<bool>(isNotify.value);
     }
-    if (location.present) {
-      map['location'] = Variable<String?>(location.value);
+    if (address.present) {
+      map['address'] = Variable<String?>(address.value);
+    }
+    if (occupation.present) {
+      map['occupation'] = Variable<String?>(occupation.value);
     }
     return map;
   }
@@ -86,7 +96,8 @@ class FriendsCompanion extends UpdateCompanion<Friend> {
           ..write('memo: $memo, ')
           ..write('birthday: $birthday, ')
           ..write('isNotify: $isNotify, ')
-          ..write('location: $location')
+          ..write('address: $address, ')
+          ..write('occupation: $occupation')
           ..write(')'))
         .toString();
   }
@@ -122,14 +133,19 @@ class $FriendsTable extends Friends with TableInfo<$FriendsTable, Friend> {
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (is_notify IN (0, 1))',
       defaultValue: const Constant(false));
-  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  final VerificationMeta _addressMeta = const VerificationMeta('address');
   @override
-  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
-      'location', aliasedName, true,
+  late final GeneratedColumn<String?> address = GeneratedColumn<String?>(
+      'address', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _occupationMeta = const VerificationMeta('occupation');
+  @override
+  late final GeneratedColumn<String?> occupation = GeneratedColumn<String?>(
+      'occupation', aliasedName, true,
       type: const StringType(), requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, memo, birthday, isNotify, location];
+      [id, memo, birthday, isNotify, address, occupation];
   @override
   String get aliasedName => _alias ?? 'friends';
   @override
@@ -154,9 +170,15 @@ class $FriendsTable extends Friends with TableInfo<$FriendsTable, Friend> {
       context.handle(_isNotifyMeta,
           isNotify.isAcceptableOrUnknown(data['is_notify']!, _isNotifyMeta));
     }
-    if (data.containsKey('location')) {
-      context.handle(_locationMeta,
-          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    if (data.containsKey('address')) {
+      context.handle(_addressMeta,
+          address.isAcceptableOrUnknown(data['address']!, _addressMeta));
+    }
+    if (data.containsKey('occupation')) {
+      context.handle(
+          _occupationMeta,
+          occupation.isAcceptableOrUnknown(
+              data['occupation']!, _occupationMeta));
     }
     return context;
   }
@@ -175,7 +197,9 @@ class $FriendsTable extends Friends with TableInfo<$FriendsTable, Friend> {
       const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}is_notify'])!,
       const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}location']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}address']),
+      const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}occupation']),
     );
   }
 
@@ -836,10 +860,8 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final $TagsTable tags = $TagsTable(this);
   late final $FriendTagsTable friendTags = $FriendTagsTable(this);
   late final FriendsDao friendsDao = FriendsDao(this as MyDatabase);
-  late final NamesDao namesDao = NamesDao(this as MyDatabase);
   late final EventsDao eventsDao = EventsDao(this as MyDatabase);
   late final TagsDao tagsDao = TagsDao(this as MyDatabase);
-  late final FriendTagsDao friendTagsDao = FriendTagsDao(this as MyDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

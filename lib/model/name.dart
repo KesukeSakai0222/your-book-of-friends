@@ -1,15 +1,28 @@
 import 'package:drift/drift.dart';
+import 'package:your_book_of_friends/database/database.dart';
 
 import 'friend.dart';
 
-class Name {
+class Name implements Insertable<Name> {
   late int? id;
-  int friendId;
+  late int friendId;
   String name;
   bool isMain;
 
   Name(this.id, this.friendId, this.name, this.isMain);
-  Name.init(this.friendId, this.name, this.isMain);
+  Name.init(this.name, this.isMain);
+  Name.initWithFriendId(this.friendId, this.name, this.isMain);
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    return NamesCompanion(
+            friendId: Value(friendId), name: Value(name), isMain: Value(isMain))
+        .toColumns(nullToAbsent);
+  }
+
+  Name setFriendId(int friendId) {
+    return Name.initWithFriendId(friendId, name, isMain);
+  }
 }
 
 @UseRowClass(Name)

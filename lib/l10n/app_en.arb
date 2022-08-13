@@ -3,5 +3,14 @@
     "title" :   "Your Book of Friends",
     "friend": "friend",
     "event": "event",
-    "search": "search"
+    "search": "search",
+    "friendAdd": "Add Friend",
+    "name": "name",
+    "memo": "memo",
+    "birthday": "birthday",
+    "notify": "notify",
+    "address": "address",
+    "occupation": "oppupation",
+    "optional": "optional",
+    "save": "save"
 }

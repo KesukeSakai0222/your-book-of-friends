@@ -8,4 +8,7 @@ part of 'friends_dao.dart';
 
 mixin _$FriendsDaoMixin on DatabaseAccessor<MyDatabase> {
   $FriendsTable get friends => attachedDatabase.friends;
+  $NamesTable get names => attachedDatabase.names;
+  $EventsTable get events => attachedDatabase.events;
+  $FriendTagsTable get friendTags => attachedDatabase.friendTags;
 }

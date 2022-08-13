@@ -3,5 +3,14 @@
     "title" : "此方友人帳",
     "friend": "友だち",
     "event": "イベント",
-    "search": "検索"
+    "search": "検索",
+    "friendAdd": "友だち登録",
+    "name": "名前",
+    "memo": "メモ",
+    "birthday": "誕生日",
+    "notify": "通知",
+    "address": "場所",
+    "occupation": "職業",
+    "optional": "任意",
+    "save": "保存"
 }

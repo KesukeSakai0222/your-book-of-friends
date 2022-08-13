@@ -15,14 +15,10 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final _selectedIndex = SelectedIndex();
-  final _bottomBar = const BottomBar();
-  final _addButton = const AddButton();
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<SelectedIndex>.value(
-        value: _selectedIndex,
+    return ChangeNotifierProvider(
+        create: (BuildContext context) => SelectedIndex(),
         child: Scaffold(
           body: CustomScrollView(slivers: <Widget>[
             SliverAppBar(
@@ -30,10 +26,12 @@ class AppState extends State<App> {
                     style: GoogleFonts.hinaMincho(fontWeight: FontWeight.bold)),
                 floating: true,
                 centerTitle: true),
-            _contents[_selectedIndex.index],
+            Consumer<SelectedIndex>(
+                builder: (context, selectedIndex, _) =>
+                    _contents[selectedIndex.index])
           ]),
-          bottomNavigationBar: _bottomBar,
-          floatingActionButton: _addButton,
+          bottomNavigationBar: const BottomBar(),
+          floatingActionButton: const AddButton(),
         ));
   }
 
@@ -50,11 +48,13 @@ class AppState extends State<App> {
   ];
 }
 
-class SelectedIndex extends ChangeNotifier {
-  var index = 0;
+class SelectedIndex with ChangeNotifier {
+  var _index = 0;
+
+  get index => _index;
 
   void setIndex(int index) {
-    this.index = index;
+    _index = index;
     notifyListeners();
   }
 }
