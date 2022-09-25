@@ -12,5 +12,6 @@
     "address": "場所",
     "occupation": "職業",
     "optional": "任意",
-    "save": "保存"
+    "save": "保存",
+    "delete": "削除"
 }

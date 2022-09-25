@@ -12,5 +12,6 @@
     "address": "address",
     "occupation": "oppupation",
     "optional": "optional",
-    "save": "save"
+    "save": "save",
+    "delete": "delete"
 }

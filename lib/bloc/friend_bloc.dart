@@ -1,18 +1,17 @@
 import 'dart:async';
 
+import 'package:your_book_of_friends/dao/my_database.dart';
 import 'package:your_book_of_friends/model/friend.dart';
-import 'package:your_book_of_friends/model/name.dart';
-import 'package:your_book_of_friends/model/tag.dart';
 import 'package:your_book_of_friends/repository/friend_repository.dart';
 
 class FriendBloc {
-  final _friendRepo = FriendRepository();
-  final _friendController =
-      StreamController<List<FriendWithMainName>>.broadcast();
+  late FriendRepository _friendRepo;
+  final _friendController = StreamController<List<Friend>>.broadcast();
 
   get friends => _friendController.stream;
 
-  FriendBloc() {
+  FriendBloc(MyDatabase db) {
+    _friendRepo = FriendRepository(db);
     getFriends();
   }
 
@@ -20,7 +19,21 @@ class FriendBloc {
       _friendController.sink.add(await _friendRepo.getAllFriends());
 
   addFriend(Friend f) async {
-    _friendRepo.addFriend(f);
+    await _friendRepo.addFriend(f);
     getFriends();
+  }
+
+  deleteFriend(int id) async {
+    await _friendRepo.deleteFriend(id);
+    getFriends();
+  }
+
+  updateFriend(Friend f) async {
+    await _friendRepo.updateFriend(f);
+    getFriends();
+  }
+
+  dispose() {
+    _friendController.close();
   }
 }

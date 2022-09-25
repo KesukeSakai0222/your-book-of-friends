@@ -1,12 +1,19 @@
+import 'dart:core';
+
+import 'package:your_book_of_friends/dao/my_database.dart';
 import 'package:your_book_of_friends/dao/friends_dao.dart';
-import 'package:your_book_of_friends/database/database.dart';
 import 'package:your_book_of_friends/model/friend.dart';
-import 'package:your_book_of_friends/model/name.dart';
-import 'package:your_book_of_friends/model/tag.dart';
 
 class FriendRepository {
-  final friendsDao = FriendsDao(MyDatabase());
+  late FriendsDao _friendsDao;
 
-  Future<List<FriendWithMainName>> getAllFriends() => friendsDao.watchAll();
-  Future addFriend(Friend f) => friendsDao.add(f);
+  FriendRepository(MyDatabase db) {
+    _friendsDao = FriendsDao(db);
+  }
+
+  Future<List<Friend>> getAllFriends() => _friendsDao.readAll();
+  Future<Friend> getFriend(int id) => _friendsDao.read(id);
+  Future addFriend(Friend f) => _friendsDao.add(f);
+  Future updateFriend(Friend f) => _friendsDao.update(f);
+  Future deleteFriend(int id) => _friendsDao.delete(id);
 }

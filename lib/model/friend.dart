@@ -1,59 +1,100 @@
-import 'package:drift/drift.dart';
-import 'package:your_book_of_friends/database/database.dart';
-import 'package:your_book_of_friends/model/event.dart';
-import 'package:your_book_of_friends/model/name.dart';
-import 'package:your_book_of_friends/model/tag.dart';
+import 'event.dart';
+import 'name.dart';
+import 'tag.dart';
 
-class Friend implements Insertable<Friend> {
-  late final int? id;
-  late final List<Name> names;
-  late final List<Event> events;
-  late final List<Tag> tags;
+const String tableName = 'friends';
+const String columnId = 'id';
+const String columnMainName = 'main_name';
+const String columnLastDay = 'lastDay';
+const String columnMemo = 'memo';
+const String columnBirthday = 'birthday';
+const String columnIsNotify = 'is_notify';
+const String columnAddress = 'address';
+const String columnOccupation = 'occupation';
+
+class Friend {
+  final int? id;
+  final String mainName;
+  final DateTime? lastDay;
   final String? memo;
   final DateTime? birthday;
   final bool isNotify;
   final String? address;
   final String? occupation;
+  final List<Name> names;
+  final List<Event> events;
+  final List<Tag> tags;
 
   // コンストラクタ
-  Friend(this.id, this.memo, this.birthday, this.isNotify, this.address,
-      this.occupation) {
-    names = <Name>[];
-    events = <Event>[];
-    tags = <Tag>[];
-  }
+  Friend(
+      {this.id,
+      required this.mainName,
+      this.lastDay,
+      this.memo,
+      this.birthday,
+      required this.isNotify,
+      this.address,
+      this.occupation,
+      required this.names,
+      required this.events,
+      required this.tags});
+
+  // レコードからの取得
+  Friend.fromMap(final Map<String, Object?> record)
+      : id = record[columnId] as int,
+        mainName = record[columnMainName] as String,
+        lastDay = record[columnLastDay] as DateTime,
+        memo = record[columnMemo] as String,
+        birthday = record[columnBirthday] as DateTime,
+        isNotify = record[columnIsNotify] as bool,
+        address = record[columnAddress] as String,
+        occupation = record[columnOccupation] as String,
+        names = [],
+        events = [],
+        tags = [];
 
   // 新規作成
-  Friend.init(this.names, this.tags, this.memo, this.birthday, this.isNotify,
-      this.address, this.occupation) {
-    events = <Event>[];
+  Friend.init(
+      {required this.mainName,
+      this.lastDay,
+      this.memo,
+      this.birthday,
+      required this.isNotify,
+      this.address,
+      this.occupation,
+      required this.names,
+      required this.tags})
+      : id = null,
+        events = [];
+
+  Map<String, Object?> toMap() {
+    final map = <String, Object?>{
+      columnMainName: mainName,
+      columnLastDay: lastDay,
+      columnMemo: memo,
+      columnBirthday: birthday,
+      columnIsNotify: isNotify,
+      columnAddress: address,
+      columnOccupation: occupation,
+    };
+    if (id != null) {
+      map[columnId] = id;
+    }
+    return map;
   }
 
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    return FriendsCompanion(
-            memo: Value(memo),
-            birthday: Value(birthday),
-            isNotify: Value(isNotify),
-            address: Value(address),
-            occupation: Value(occupation))
-        .toColumns(nullToAbsent);
+  List<Map<String, Object?>> eventsToMap() {
+    return events.map((event) => event.toMap()).toList();
   }
-}
 
-class FriendWithMainName {
-  final Friend friend;
-  final Name mainName;
+  List<Map<String, Object?>> namesToMap() {
+    return names.map((name) => name.toMap()).toList();
+  }
 
-  FriendWithMainName(this.friend, this.mainName);
-}
-
-@UseRowClass(Friend)
-class Friends extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get memo => text().nullable()();
-  DateTimeColumn get birthday => dateTime().nullable()();
-  BoolColumn get isNotify => boolean().withDefault(const Constant(false))();
-  TextColumn get address => text().nullable()();
-  TextColumn get occupation => text().nullable()();
+  List<Map<String, Object?>> tagsToFriendTagsMap() {
+    if (id == null) {
+      throw ArgumentError("idを設定してください");
+    }
+    return tags.map((tag) => tag.toFriendTagsMap(id!)).toList();
+  }
 }

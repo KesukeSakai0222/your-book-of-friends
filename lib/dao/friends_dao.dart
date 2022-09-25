@@ -1,50 +1,69 @@
-import 'package:drift/drift.dart';
-import 'package:your_book_of_friends/database/database.dart';
-import 'package:your_book_of_friends/model/event.dart';
-import 'package:your_book_of_friends/model/friend.dart';
-import 'package:your_book_of_friends/model/friend_tag.dart';
-import 'package:your_book_of_friends/model/name.dart';
-import 'package:your_book_of_friends/model/tag.dart';
+import 'dart:async';
 
-part 'friends_dao.g.dart';
+import 'package:your_book_of_friends/dao/my_database.dart';
+import 'package:your_book_of_friends/model/friend.dart' as f;
+import 'package:your_book_of_friends/model/event.dart' as e;
+import 'package:your_book_of_friends/model/name.dart' as n;
+import 'package:your_book_of_friends/model/tag.dart' as t;
 
-@DriftAccessor(tables: [Friends, Names, Events, FriendTags])
-class FriendsDao extends DatabaseAccessor<MyDatabase> with _$FriendsDaoMixin {
-  FriendsDao(super.attachedDatabase);
+class FriendsDao {
+  final MyDatabase _myDatabase;
 
-  Future<List<FriendWithMainName>> watchAll() async {
-    final query = select(friends).join([
-      innerJoin(names, names.friendId.equalsExp(friends.id)),
-    ])
-      ..where(names.isMain.equals(true));
-    final result = await query.get();
+  FriendsDao(this._myDatabase);
 
-    return result.map((row) {
-      return FriendWithMainName(row.readTable(friends), row.readTable(names));
-    }).toList();
+  Future<List<f.Friend>> readAll() async {
+    final result = _myDatabase.db.then((db) => db.query(f.tableName));
+
+    return result.then((records) =>
+        records.map((record) => f.Friend.fromMap(record)).toList());
   }
 
-  // Stream<List<Friend>> watchAllSortByLastDay() {
-  //   return (select(friends)..orderBy([(t) => OrderingTerm(expression: t.)])).watch();
-  // }
+  Future<f.Friend> read(int id) async {
+    final result = await _myDatabase.db.then((db) =>
+        db.query(f.tableName, where: 'id = ?', whereArgs: [id], limit: 1));
+    return f.Friend.fromMap(result[0]);
+  }
 
-  Future add(Friend f) async {
-    final id = into(friends).insert(f);
-    id.then((i) {
-      for (var n in f.names) {
-        into(names).insert(n.setFriendId(i));
-      }
-      for (var t in f.tags) {
-        into(friendTags).insert(FriendTag.init(i, t.id));
-      }
+  Future add(f.Friend friend) {
+    return _myDatabase.db.then((db) {
+      db.transaction((txn) async {
+        final id = await txn.insert(f.tableName, friend.toMap());
+
+        final batch = txn.batch();
+        for (var name in friend.names) {
+          batch.insert(n.tableName, name.setFriendId(id).toMap());
+        }
+        for (final event in friend.events) {
+          batch.insert(e.tableName, event.setFriendId(id).toMap());
+        }
+        for (var tag in friend.tags) {
+          batch.insert(t.tableName, tag.toFriendTagsMap(id));
+        }
+        await batch.commit(noResult: true);
+      });
     });
   }
 
-  Future del(Friend f) {
-    return (delete(friends)..where((t) => t.id.equals(f.id))).go();
+  Future delete(int id) {
+    return _myDatabase.db.then((db) {
+      db.transaction((txn) async {
+        final batch = txn.batch();
+        batch.delete(n.tableName, where: 'friend_id = ?', whereArgs: [id]);
+        batch.delete(e.tableName, where: 'friend_id = ?', whereArgs: [id]);
+        batch.delete(t.joinTableName, where: 'friend_id = ?', whereArgs: [id]);
+        batch.delete(f.tableName, where: 'id = ?', whereArgs: [id]);
+        await batch.commit(noResult: true);
+      });
+    });
   }
 
-  Future upd(Friend f) {
-    return (update(friends)..where((t) => t.id.equals(f.id))).write(f);
+  Future update(f.Friend friend) {
+    if (friend.id == null) {
+      throw ArgumentError('idを設定してください');
+    }
+    return _myDatabase.db.then((db) async {
+      await db.update(f.tableName, friend.toMap(),
+          where: 'id = ?', whereArgs: [friend.id]);
+    });
   }
 }

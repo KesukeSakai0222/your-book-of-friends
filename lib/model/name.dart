@@ -1,35 +1,40 @@
-import 'package:drift/drift.dart';
-import 'package:your_book_of_friends/database/database.dart';
+const String tableName = 'friends';
+const String columnId = 'id';
+const String columnFriendId = 'friend_id';
+const String columnName = 'name';
+const String columnIsMain = 'is_main';
 
-import 'friend.dart';
-
-class Name implements Insertable<Name> {
-  late int? id;
-  late int friendId;
-  String name;
-  bool isMain;
+class Name {
+  late final int? id;
+  late final int? friendId;
+  late final String name;
+  late final bool isMain;
 
   Name(this.id, this.friendId, this.name, this.isMain);
-  Name.init(this.name, this.isMain);
-  Name.initWithFriendId(this.friendId, this.name, this.isMain);
+  Name.init(this.name, this.isMain)
+      : id = null,
+        friendId = null;
 
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    return NamesCompanion(
-            friendId: Value(friendId), name: Value(name), isMain: Value(isMain))
-        .toColumns(nullToAbsent);
+  Name.fromMap(final Map<String, Object?> map) {
+    id = map[columnId] as int;
+    friendId = map[columnFriendId] as int;
+    name = map[columnName] as String;
+    isMain = map[columnIsMain] as bool;
   }
 
   Name setFriendId(int friendId) {
-    return Name.initWithFriendId(friendId, name, isMain);
+    return Name(id, friendId, name, isMain);
   }
-}
 
-@UseRowClass(Name)
-class Names extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get friendId =>
-      integer().customConstraint('NOT NULL REFERENCES friends(id)')();
-  TextColumn get name => text()();
-  BoolColumn get isMain => boolean().withDefault(const Constant(false))();
+  Map<String, Object?> toMap() {
+    final map = <String, Object?>{columnName: name, columnIsMain: isMain};
+    if (id != null) {
+      map[columnId] = id;
+    }
+    if (friendId == null) {
+      throw ArgumentError("friend idを設定してください");
+    }
+    map[columnFriendId] = friendId;
+    return map;
+  }
 }
