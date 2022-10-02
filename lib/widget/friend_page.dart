@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:your_book_of_friends/bloc/friend_bloc.dart';
 import 'package:your_book_of_friends/dao/my_database.dart';
 import 'package:your_book_of_friends/model/friend.dart';
@@ -15,47 +14,31 @@ class FriendPage extends StatefulWidget {
 
 class FriendPageState extends State<FriendPage> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return StreamBuilder(
-        stream: FriendBloc(Provider.of<MyDatabase>(context)).getFriends(),
-        builder: (context, AsyncSnapshot<List<Friend>> snapshot) {
-          return friendCards(snapshot);
-        });
+        stream: FriendBloc(Provider.of<MyDatabase>(context)).friendStream,
+        builder: ((BuildContext context, AsyncSnapshot<List<Friend>> snapshot) {
+          return snapshot.hasData && snapshot.data!.isNotEmpty
+              ? SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final f = snapshot.data![index];
+                    return friendCard(context, f);
+                  }, childCount: snapshot.data!.length),
+                )
+              : const SliverToBoxAdapter();
+        }));
   }
 }
 
-Widget friendCards(AsyncSnapshot<List<Friend>> snapshot) {
-  return snapshot.hasData && snapshot.data!.isNotEmpty
-      ? ListView.builder(
-          itemCount: snapshot.data!.length,
-          itemBuilder: ((context, index) {
-            final f = snapshot.data![index];
-            final card = Dismissible(
-              background: Container(
-                color: Colors.redAccent,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      AppLocalizations.of(context)!.delete,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              key: ObjectKey(f),
-              child: Card(
-                color: Colors.white,
-                child: Text(f.mainName),
-              ),
-              onDismissed: (direction) {
-                FriendBloc(Provider.of<MyDatabase>(context))
-                    .deleteFriend(f.id!);
-              },
-            );
-            return card;
-          }),
-        )
-      : ListView();
+Widget friendCard(BuildContext context, Friend f) {
+  return Card(
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: Colors.grey, width: 0.5),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      color: Colors.white,
+      child: ListTile(
+          leading: InkWell(
+              onTap: () {}, child: const Padding(padding: EdgeInsets.all(1))),
+          title: Text(f.mainName)));
 }

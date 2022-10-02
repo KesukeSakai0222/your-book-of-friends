@@ -4,6 +4,7 @@ const String columnId = 'id';
 const String columnFriendId = 'friend_id';
 const String columnTagId = 'tag_id';
 const String columnName = 'name';
+const String columnTagName = 'tag_name';
 const String columnColor = 'color';
 
 class Tag {
@@ -15,8 +16,8 @@ class Tag {
   Tag.init(this.name, this.color);
 
   Tag.fromMap(Map<String, Object?> map) {
-    id = map[columnId] as int;
-    name = map[columnName] as String;
+    id = map[columnId] as int? ?? map[columnTagId] as int;
+    name = map[columnName] as String? ?? map[columnTagName] as String;
     color = map[columnColor] as String;
   }
 
@@ -34,4 +35,15 @@ class Tag {
   Map<String, Object?> toFriendTagsMap(final int friendId) {
     return <String, Object?>{columnFriendId: friendId, columnTagId: id};
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Tag) {
+      return id == other.id;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

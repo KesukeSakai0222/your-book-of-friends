@@ -26,8 +26,8 @@ class BottomBarState extends State<StatefulWidget> {
           label: AppLocalizations.of(context)!.event,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.search),
-          label: AppLocalizations.of(context)!.search,
+          icon: const Icon(Icons.label),
+          label: AppLocalizations.of(context)!.tag,
         )
       ],
       currentIndex: selectedIndex.index,

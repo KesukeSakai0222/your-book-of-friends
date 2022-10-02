@@ -8,15 +8,18 @@ class FriendBloc {
   late FriendRepository _friendRepo;
   final _friendController = StreamController<List<Friend>>.broadcast();
 
-  get friends => _friendController.stream;
-
   FriendBloc(MyDatabase db) {
     _friendRepo = FriendRepository(db);
     getFriends();
   }
 
+  get friendStream => _friendController.stream;
+
   getFriends() async =>
       _friendController.sink.add(await _friendRepo.getAllFriends());
+
+  searchFriends(String v) async =>
+      _friendController.sink.add(await _friendRepo.searchFriends(v));
 
   addFriend(Friend f) async {
     await _friendRepo.addFriend(f);

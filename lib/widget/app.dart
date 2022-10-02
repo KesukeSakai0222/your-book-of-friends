@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:your_book_of_friends/widget/bottom_bar.dart';
+import 'package:your_book_of_friends/widget/friend_page.dart';
 
 import 'add_button.dart';
+import 'app_bar.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -21,11 +21,7 @@ class AppState extends State<App> {
         create: (BuildContext context) => SelectedIndex(),
         child: Scaffold(
           body: CustomScrollView(slivers: <Widget>[
-            SliverAppBar(
-                title: Text(AppLocalizations.of(context)!.title,
-                    style: GoogleFonts.hinaMincho(fontWeight: FontWeight.bold)),
-                floating: true,
-                centerTitle: true),
+            const MyAppBar(),
             Consumer<SelectedIndex>(
                 builder: (context, selectedIndex, _) =>
                     _contents[selectedIndex.index])
@@ -36,7 +32,7 @@ class AppState extends State<App> {
   }
 
   final _contents = [
-    SliverList(delegate: SliverChildListDelegate([const Text("friend")])),
+    const FriendPage(),
     SliverList(delegate: SliverChildListDelegate([const Text("event")])),
     SliverList(
         delegate: SliverChildListDelegate([

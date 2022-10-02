@@ -1,10 +1,42 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:your_book_of_friends/dao/my_database.dart';
 import 'package:your_book_of_friends/model/friend.dart' as f;
 import 'package:your_book_of_friends/model/event.dart' as e;
 import 'package:your_book_of_friends/model/name.dart' as n;
 import 'package:your_book_of_friends/model/tag.dart' as t;
+
+const coreSql = """
+      select
+        f.id          as friend_id
+      , f.main_name   as main_name
+      , f.last_date   as last_date
+      , f.birthday    as birthday
+      , f.memo        as memo
+      , f.is_notify   as is_notify
+      , f.address     as address
+      , f.occupation  as occupation
+      , n.id          as name_id
+      , n.name        as name
+      , t.id          as tag_id
+      , t.name        as tag_name
+      , t.color       as color
+      from
+        friends f
+      left join
+        names n
+      on
+        f.id = n.friend_id
+      left join
+        friend_tags ft
+      on
+        f.id = ft.friend_id
+      left join
+        tags t
+      on
+        ft.tag_id = t.id
+      """;
 
 class FriendsDao {
   final MyDatabase _myDatabase;
@@ -12,16 +44,27 @@ class FriendsDao {
   FriendsDao(this._myDatabase);
 
   Future<List<f.Friend>> readAll() async {
-    final result = _myDatabase.db.then((db) => db.query(f.tableName));
+    final result = _myDatabase.db.then((db) => db.rawQuery(coreSql));
 
-    return result.then((records) =>
-        records.map((record) => f.Friend.fromMap(record)).toList());
+    final grouped = result
+        .then((values) => groupBy(values, (p0) => p0['friend_id'] as int));
+    return grouped.then((values) =>
+        values.entries.map((value) => f.Friend.fromMap(value.value)).toList());
   }
 
   Future<f.Friend> read(int id) async {
-    final result = await _myDatabase.db.then((db) =>
-        db.query(f.tableName, where: 'id = ?', whereArgs: [id], limit: 1));
-    return f.Friend.fromMap(result[0]);
+    final result = _myDatabase.db
+        .then((db) => db.rawQuery("$coreSql where f.id = ?1", [id]));
+    return result.then((value) => f.Friend.fromMap(value));
+  }
+
+  Future<List<f.Friend>> search(String v) async {
+    final result = _myDatabase.db
+        .then((db) => db.rawQuery("$coreSql where n.name like ?1", ["$v%"]));
+    final grouped = result
+        .then((values) => groupBy(values, (p0) => p0['friend_id'] as int));
+    return grouped.then((values) =>
+        values.entries.map((value) => f.Friend.fromMap(value.value)).toList());
   }
 
   Future add(f.Friend friend) {
@@ -32,9 +75,6 @@ class FriendsDao {
         final batch = txn.batch();
         for (var name in friend.names) {
           batch.insert(n.tableName, name.setFriendId(id).toMap());
-        }
-        for (final event in friend.events) {
-          batch.insert(e.tableName, event.setFriendId(id).toMap());
         }
         for (var tag in friend.tags) {
           batch.insert(t.tableName, tag.toFriendTagsMap(id));

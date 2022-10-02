@@ -1,62 +1,70 @@
-import 'event.dart';
 import 'name.dart';
 import 'tag.dart';
 
 const String tableName = 'friends';
 const String columnId = 'id';
 const String columnMainName = 'main_name';
-const String columnLastDay = 'lastDay';
+const String columnLastDate = 'last_date';
 const String columnMemo = 'memo';
 const String columnBirthday = 'birthday';
 const String columnIsNotify = 'is_notify';
 const String columnAddress = 'address';
 const String columnOccupation = 'occupation';
+const String columnFriendId = 'friend_id';
 
 class Friend {
-  final int? id;
-  final String mainName;
-  final DateTime? lastDay;
-  final String? memo;
-  final DateTime? birthday;
-  final bool isNotify;
-  final String? address;
-  final String? occupation;
-  final List<Name> names;
-  final List<Event> events;
-  final List<Tag> tags;
+  late final int? id;
+  late final String mainName;
+  late final DateTime? lastDate;
+  late final String? memo;
+  late final DateTime? birthday;
+  late final bool isNotify;
+  late final String? address;
+  late final String? occupation;
+  late final List<Name> names;
+  late final List<Tag> tags;
 
   // コンストラクタ
   Friend(
       {this.id,
       required this.mainName,
-      this.lastDay,
+      this.lastDate,
       this.memo,
       this.birthday,
       required this.isNotify,
       this.address,
       this.occupation,
       required this.names,
-      required this.events,
       required this.tags});
 
   // レコードからの取得
-  Friend.fromMap(final Map<String, Object?> record)
-      : id = record[columnId] as int,
-        mainName = record[columnMainName] as String,
-        lastDay = record[columnLastDay] as DateTime,
-        memo = record[columnMemo] as String,
-        birthday = record[columnBirthday] as DateTime,
-        isNotify = record[columnIsNotify] as bool,
-        address = record[columnAddress] as String,
-        occupation = record[columnOccupation] as String,
-        names = [],
-        events = [],
-        tags = [];
+  Friend.fromMap(final List<Map<String, Object?>> records) {
+    id = records[0][columnFriendId] as int;
+    mainName = records[0][columnMainName] as String;
+    lastDate = records[0][columnLastDate] as DateTime?;
+    memo = records[0][columnMemo] as String?;
+    birthday = records[0][columnBirthday] as DateTime?;
+    isNotify = records[0][columnIsNotify] == 0 ? false : true;
+    address = records[0][columnAddress] as String?;
+    occupation = records[0][columnOccupation] as String?;
+    final namesSet = <Name>{};
+    final tagsSet = <Tag>{};
+    for (final record in records) {
+      if (record[columnNameId] != null) {
+        namesSet.add(Name.fromMap(record));
+      }
+      if (record[columnTagId] != null) {
+        tagsSet.add(Tag.fromMap(record));
+      }
+    }
+    names = namesSet.toList();
+    tags = tagsSet.toList();
+  }
 
   // 新規作成
   Friend.init(
       {required this.mainName,
-      this.lastDay,
+      this.lastDate,
       this.memo,
       this.birthday,
       required this.isNotify,
@@ -64,16 +72,15 @@ class Friend {
       this.occupation,
       required this.names,
       required this.tags})
-      : id = null,
-        events = [];
+      : id = null;
 
   Map<String, Object?> toMap() {
     final map = <String, Object?>{
       columnMainName: mainName,
-      columnLastDay: lastDay,
+      columnLastDate: lastDate,
       columnMemo: memo,
       columnBirthday: birthday,
-      columnIsNotify: isNotify,
+      columnIsNotify: isNotify ? 1 : 0,
       columnAddress: address,
       columnOccupation: occupation,
     };
@@ -81,10 +88,6 @@ class Friend {
       map[columnId] = id;
     }
     return map;
-  }
-
-  List<Map<String, Object?>> eventsToMap() {
-    return events.map((event) => event.toMap()).toList();
   }
 
   List<Map<String, Object?>> namesToMap() {
@@ -97,4 +100,15 @@ class Friend {
     }
     return tags.map((tag) => tag.toFriendTagsMap(id!)).toList();
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Friend) {
+      return id == other.id;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

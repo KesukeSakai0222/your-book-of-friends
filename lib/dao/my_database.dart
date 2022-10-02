@@ -21,30 +21,32 @@ class MyDatabase {
 
   Future<Database> openDb() async {
     return await openDatabase(
-        join(await getDatabasesPath(), 'your_book_of_driends.db'),
-        onCreate: ((db, version) async {
-      await db.execute(
-        """
+      join(await getDatabasesPath(), 'your_book_of_driends.db'),
+      version: 1,
+      onCreate: ((db, version) async {
+        await db.execute(
+          """
         create table friends(
           id integer primary key autoincrement,
           main_name text not null,
           last_date text,
+          birthday text,
           memo text,
           is_notify boolean not null,
           address text,
           occupation text)
         """,
-      );
-      await db.execute(
-        """
+        );
+        await db.execute(
+          """
         create table tags(
           id integer primary key autoincrement,
           name text not null,
-          color TEXT not null)
+          color text not null)
         """,
-      );
-      await db.execute(
-        """
+        );
+        await db.execute(
+          """
         create table names(
           id integer primary key autoincrement,
           friend_id integer not null,
@@ -52,9 +54,9 @@ class MyDatabase {
           is_main boolean not null,
           foreign key(friend_id) references friends(id))
         """,
-      );
-      await db.execute(
-        """
+        );
+        await db.execute(
+          """
         create table events(
           id integer primary key autoincrement,
           friend_id integer not null,
@@ -64,9 +66,9 @@ class MyDatabase {
           amount integer not null,
           foreign key(friend_id) references friends(id))
         """,
-      );
-      await db.execute(
-        """
+        );
+        await db.execute(
+          """
         create table friend_tags(
           id integer primary key autoincrement,
           friend_id integer not null,
@@ -74,7 +76,9 @@ class MyDatabase {
           foreign key(friend_id) references friends(id),
           foreign key(tag_id) references tags(id))
         """,
-      );
-    }));
+        );
+      }),
+      onUpgrade: (db, oldVersion, newVersion) async {},
+    );
   }
 }

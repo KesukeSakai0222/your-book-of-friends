@@ -3,6 +3,7 @@
     "title" :   "Your Book of Friends",
     "friend": "friend",
     "event": "event",
+    "tag": "tag",
     "search": "search",
     "friendAdd": "Add Friend",
     "name": "name",

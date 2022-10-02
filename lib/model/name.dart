@@ -1,8 +1,9 @@
-const String tableName = 'friends';
+const String tableName = 'names';
 const String columnId = 'id';
 const String columnFriendId = 'friend_id';
 const String columnName = 'name';
-const String columnIsMain = 'is_main';
+const String columnIsMain = "is_main";
+const String columnNameId = 'name_id';
 
 class Name {
   late final int? id;
@@ -16,10 +17,10 @@ class Name {
         friendId = null;
 
   Name.fromMap(final Map<String, Object?> map) {
-    id = map[columnId] as int;
+    id = map[columnId] as int? ?? map[columnNameId] as int;
     friendId = map[columnFriendId] as int;
     name = map[columnName] as String;
-    isMain = map[columnIsMain] as bool;
+    isMain = map[columnIsMain] == '1' ? true : false;
   }
 
   Name setFriendId(int friendId) {
@@ -27,7 +28,10 @@ class Name {
   }
 
   Map<String, Object?> toMap() {
-    final map = <String, Object?>{columnName: name, columnIsMain: isMain};
+    final map = <String, Object?>{
+      columnName: name,
+      columnIsMain: isMain ? 1 : 0
+    };
     if (id != null) {
       map[columnId] = id;
     }
@@ -37,4 +41,15 @@ class Name {
     map[columnFriendId] = friendId;
     return map;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Name) {
+      return id == other.id;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }
