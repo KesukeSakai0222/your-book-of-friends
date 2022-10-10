@@ -4,8 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:your_book_of_friends/bloc/friend_bloc.dart';
-import 'package:your_book_of_friends/dao/my_database.dart';
-import 'package:your_book_of_friends/widget/app.dart';
+import 'package:your_book_of_friends/model/selected_index.dart';
 
 class MyAppBar extends StatefulWidget {
   const MyAppBar({super.key});
@@ -19,18 +18,17 @@ class MyAppBarState extends State<StatefulWidget> {
   @override
   Widget build(BuildContext context) {
     var index = Provider.of<SelectedIndex>(context).index;
+    var friendBloc = Provider.of<FriendBloc>(context);
     return SliverAppBar(
         title: _isSearchMode
             ? TextField(
                 autofocus: true,
                 cursorColor: Colors.white,
                 textInputAction: TextInputAction.search,
-                onChanged: (value) {
+                onSubmitted: (value) {
                   switch (index) {
                     case 0:
-                      FriendBloc(
-                              Provider.of<MyDatabase>(context, listen: false))
-                          .searchFriends(value);
+                      friendBloc.searchFriends(value);
                       break;
                     case 1:
                       break;

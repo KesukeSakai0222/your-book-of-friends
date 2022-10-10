@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:your_book_of_friends/dao/my_database.dart';
-import 'package:your_book_of_friends/widget/app.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:your_book_of_friends/widget/providers.dart';
 
 void main() {
   runApp(
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: const App(),
+      home: const Providers(),
     );
   }
 }

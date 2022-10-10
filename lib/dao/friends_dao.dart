@@ -7,7 +7,7 @@ import 'package:your_book_of_friends/model/event.dart' as e;
 import 'package:your_book_of_friends/model/name.dart' as n;
 import 'package:your_book_of_friends/model/tag.dart' as t;
 
-const coreSql = """
+const coreSqlColumns = """
       select
         f.id          as friend_id
       , f.main_name   as main_name
@@ -22,8 +22,8 @@ const coreSql = """
       , t.id          as tag_id
       , t.name        as tag_name
       , t.color       as color
-      from
-        friends f
+      """;
+const coreSqlBody = """
       left join
         names n
       on
@@ -44,7 +44,11 @@ class FriendsDao {
   FriendsDao(this._myDatabase);
 
   Future<List<f.Friend>> readAll() async {
-    final result = _myDatabase.db.then((db) => db.rawQuery(coreSql));
+    final result = _myDatabase.db.then((db) => db.rawQuery("""
+      $coreSqlColumns
+      from
+        friends f
+      $coreSqlBody"""));
 
     final grouped = result
         .then((values) => groupBy(values, (p0) => p0['friend_id'] as int));
@@ -53,14 +57,28 @@ class FriendsDao {
   }
 
   Future<f.Friend> read(int id) async {
-    final result = _myDatabase.db
-        .then((db) => db.rawQuery("$coreSql where f.id = ?1", [id]));
+    final result = _myDatabase.db.then((db) => db.rawQuery("""
+      $coreSqlColumns
+      from
+        friend f
+      $coreSqlBody
+      where
+        f.id = ?1""", [id]));
     return result.then((value) => f.Friend.fromMap(value));
   }
 
   Future<List<f.Friend>> search(String v) async {
-    final result = _myDatabase.db
-        .then((db) => db.rawQuery("$coreSql where n.name like ?1", ["$v%"]));
+    final result = _myDatabase.db.then((db) => db.rawQuery("""
+      $coreSqlColumns
+      from
+        names nd
+      inner join
+        friends f
+      on
+        f.id = nd.friend_id
+      $coreSqlBody
+      where
+        nd.name like ?1""", ["$v%"]));
     final grouped = result
         .then((values) => groupBy(values, (p0) => p0['friend_id'] as int));
     return grouped.then((values) =>

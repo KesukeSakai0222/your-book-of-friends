@@ -10,15 +10,15 @@ const String columnColor = 'color';
 class Tag {
   late final int? id;
   late final String name;
-  late final String color;
+  late final int color;
 
   Tag(this.id, this.name, this.color);
   Tag.init(this.name, this.color);
 
   Tag.fromMap(Map<String, Object?> map) {
-    id = map[columnId] as int? ?? map[columnTagId] as int;
-    name = map[columnName] as String? ?? map[columnTagName] as String;
-    color = map[columnColor] as String;
+    id = map[columnTagId] as int? ?? map[columnId] as int;
+    name = map[columnTagName] as String? ?? map[columnName] as String;
+    color = map[columnColor] as int;
   }
 
   Map<String, Object?> toMap() {

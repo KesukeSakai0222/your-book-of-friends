@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:your_book_of_friends/bloc/friend_bloc.dart';
-import 'package:your_book_of_friends/dao/my_database.dart';
 import 'package:your_book_of_friends/model/friend.dart';
 
 class FriendPage extends StatefulWidget {
@@ -15,8 +14,9 @@ class FriendPage extends StatefulWidget {
 class FriendPageState extends State<FriendPage> {
   @override
   Widget build(final BuildContext context) {
+    final bloc = Provider.of<FriendBloc>(context, listen: false);
     return StreamBuilder(
-        stream: FriendBloc(Provider.of<MyDatabase>(context)).friendStream,
+        stream: bloc.friendStream,
         builder: ((BuildContext context, AsyncSnapshot<List<Friend>> snapshot) {
           return snapshot.hasData && snapshot.data!.isNotEmpty
               ? SliverList(
@@ -38,7 +38,11 @@ Widget friendCard(BuildContext context, Friend f) {
       ),
       color: Colors.white,
       child: ListTile(
-          leading: InkWell(
-              onTap: () {}, child: const Padding(padding: EdgeInsets.all(1))),
-          title: Text(f.mainName)));
+        leading: CircleAvatar(
+            child: Text(
+          f.mainName.substring(0, 1),
+          style: const TextStyle(color: Colors.white),
+        )),
+        title: Text(f.mainName),
+      ));
 }

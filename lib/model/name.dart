@@ -17,7 +17,7 @@ class Name {
         friendId = null;
 
   Name.fromMap(final Map<String, Object?> map) {
-    id = map[columnId] as int? ?? map[columnNameId] as int;
+    id = map[columnNameId] as int? ?? map[columnId] as int;
     friendId = map[columnFriendId] as int;
     name = map[columnName] as String;
     isMain = map[columnIsMain] == '1' ? true : false;

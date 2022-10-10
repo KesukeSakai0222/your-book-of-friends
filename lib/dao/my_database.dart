@@ -22,7 +22,7 @@ class MyDatabase {
   Future<Database> openDb() async {
     return await openDatabase(
       join(await getDatabasesPath(), 'your_book_of_driends.db'),
-      version: 1,
+      version: 2,
       onCreate: ((db, version) async {
         await db.execute(
           """
@@ -42,7 +42,7 @@ class MyDatabase {
         create table tags(
           id integer primary key autoincrement,
           name text not null,
-          color text not null)
+          color integer not null)
         """,
         );
         await db.execute(
@@ -78,7 +78,17 @@ class MyDatabase {
         """,
         );
       }),
-      onUpgrade: (db, oldVersion, newVersion) async {},
+      onUpgrade: (db, oldVersion, newVersion) async {
+        await db.execute("drop table tags");
+        await db.execute(
+          """
+        create table tags(
+          id integer primary key autoincrement,
+          name text not null,
+          color integer not null)
+        """,
+        );
+      },
     );
   }
 }

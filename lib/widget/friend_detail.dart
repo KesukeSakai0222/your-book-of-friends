@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:your_book_of_friends/bloc/friend_bloc.dart';
-import 'package:your_book_of_friends/dao/my_database.dart';
 import 'package:your_book_of_friends/model/friend.dart';
 import 'package:your_book_of_friends/model/name.dart';
 
@@ -42,7 +41,7 @@ class FriendAddState extends State<FriendAdd> {
 
   @override
   Widget build(BuildContext context) {
-    _bloc = FriendBloc(Provider.of<MyDatabase>(context));
+    _bloc = context.watch<FriendBloc>();
     //TODO: tag追加、name複数追加
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.friendAdd)),
