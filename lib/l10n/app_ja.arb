@@ -6,6 +6,7 @@
     "tag": "タグ",
     "search": "検索",
     "friendAdd": "友だち登録",
+    "tagAdd": "タグ登録",
     "name": "名前",
     "memo": "メモ",
     "birthday": "誕生日",
@@ -13,6 +14,9 @@
     "address": "場所",
     "occupation": "職業",
     "optional": "任意",
+    "color": "色",
     "save": "保存",
-    "delete": "削除"
+    "delete": "削除",
+
+    "warnRequired": "必須項目です"
 }

@@ -5,8 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:your_book_of_friends/bloc/friend_bloc.dart';
 import 'package:your_book_of_friends/model/friend.dart';
 import 'package:your_book_of_friends/model/name.dart';
-
-import '../model/tag.dart';
+import 'package:your_book_of_friends/model/tag.dart';
 
 class FriendDetail extends StatefulWidget {
   const FriendDetail({super.key});
@@ -46,66 +45,70 @@ class FriendAddState extends State<FriendAdd> {
     return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.friendAdd)),
         body: Container(
-            padding: const EdgeInsets.all(40),
+            padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                      decoration: InputDecoration(
-                          icon: const Icon(Icons.face),
-                          labelText: AppLocalizations.of(context)!.name),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '必須項目です';
-                        }
-                        return null;
-                      },
-                      controller: nameController,
-                      autovalidateMode: AutovalidateMode.always),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      icon: const Icon(Icons.cake),
-                      labelText: AppLocalizations.of(context)!.birthday,
-                      helperText: AppLocalizations.of(context)!.optional,
-                      helperStyle: const TextStyle(fontSize: 11, height: 0.5),
-                    ),
-                    controller: birthdayController,
-                    onTap: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      final picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime(2000, 1, 1),
-                          firstDate: DateTime(1900, 1, 1),
-                          lastDate: DateTime.now());
-                      setState(() {
-                        _birthday = picked;
-                        if (picked != null) {
-                          birthdayController.text =
-                              DateFormat("yyyy/MM/dd").format(picked);
-                        }
-                      });
-                    },
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      icon: const Icon(Icons.work),
-                      labelText: AppLocalizations.of(context)!.occupation,
-                      helperText: AppLocalizations.of(context)!.optional,
-                      helperStyle: const TextStyle(fontSize: 11, height: 0.5),
-                    ),
-                    controller: occupationController,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      icon: const Icon(Icons.home),
-                      labelText: AppLocalizations.of(context)!.address,
-                      helperText: AppLocalizations.of(context)!.optional,
-                      helperStyle: const TextStyle(fontSize: 11, height: 0.5),
-                    ),
-                    controller: addressController,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                            icon: const Icon(Icons.face),
+                            labelText: AppLocalizations.of(context)!.name,
+                            border: const OutlineInputBorder()),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '必須項目です';
+                          }
+                          return null;
+                        },
+                        controller: nameController,
+                        autovalidateMode: AutovalidateMode.always),
                   ),
                   Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            icon: const Icon(Icons.cake),
+                            labelText: AppLocalizations.of(context)!.birthday,
+                            border: const OutlineInputBorder()),
+                        controller: birthdayController,
+                        onTap: () async {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          final picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime(2000, 1, 1),
+                              firstDate: DateTime(1900, 1, 1),
+                              lastDate: DateTime.now());
+                          setState(() {
+                            _birthday = picked;
+                            if (picked != null) {
+                              birthdayController.text =
+                                  DateFormat("yyyy/MM/dd").format(picked);
+                            }
+                          });
+                        },
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            icon: const Icon(Icons.work),
+                            labelText: AppLocalizations.of(context)!.occupation,
+                            border: const OutlineInputBorder()),
+                        controller: occupationController,
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            icon: const Icon(Icons.home),
+                            labelText: AppLocalizations.of(context)!.address,
+                            border: const OutlineInputBorder()),
+                        controller: addressController,
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Row(children: [
                         const Padding(
                           padding: EdgeInsets.only(right: 16),
@@ -124,10 +127,11 @@ class FriendAddState extends State<FriendAdd> {
                       ])),
                   TextFormField(
                     keyboardType: TextInputType.multiline,
-                    maxLines: null,
+                    maxLines: 20,
                     decoration: InputDecoration(
                         icon: const Icon(Icons.notes),
-                        labelText: AppLocalizations.of(context)!.memo),
+                        labelText: AppLocalizations.of(context)!.memo,
+                        border: const OutlineInputBorder()),
                     controller: memoController,
                   ),
                   Padding(

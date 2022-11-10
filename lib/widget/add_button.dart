@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:your_book_of_friends/bloc/friend_bloc.dart';
+import 'package:your_book_of_friends/bloc/tag_bloc.dart';
 import 'package:your_book_of_friends/model/selected_index.dart';
 import 'package:your_book_of_friends/widget/friend_detail.dart';
+import 'package:your_book_of_friends/widget/tag_detail.dart';
 
 class AddButton extends StatefulWidget {
   const AddButton({super.key});
@@ -13,18 +16,28 @@ class AddButton extends StatefulWidget {
 class AddButtonState extends State<StatefulWidget> {
   @override
   Widget build(BuildContext context) {
-    var index = Provider.of<SelectedIndex>(context).index;
+    final index = Provider.of<SelectedIndex>(context).index;
+    final friendBloc = Provider.of<FriendBloc>(context);
+    final tagBloc = Provider.of<TagBloc>(context);
     return FloatingActionButton(
       child: const Icon(Icons.add),
       onPressed: () {
         switch (index) {
           case 0:
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const FriendAdd()));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Provider(
+                      create: (context) => friendBloc,
+                      child: const FriendAdd(),
+                    )));
             break;
           case 1:
             break;
           case 2:
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Provider(
+                      create: (context) => tagBloc,
+                      child: const TagAdd(),
+                    )));
             break;
         }
       },

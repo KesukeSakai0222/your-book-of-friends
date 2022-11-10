@@ -6,6 +6,7 @@
     "tag": "tag",
     "search": "search",
     "friendAdd": "Add Friend",
+    "tagAdd": "Add Tag",
     "name": "name",
     "memo": "memo",
     "birthday": "birthday",
@@ -13,6 +14,9 @@
     "address": "address",
     "occupation": "oppupation",
     "optional": "optional",
+    "color": "color",
     "save": "save",
-    "delete": "delete"
+    "delete": "delete",
+
+    "warnRequired": "Required field!"
 }

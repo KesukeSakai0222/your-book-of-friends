@@ -13,7 +13,9 @@ class Tag {
   late final int color;
 
   Tag(this.id, this.name, this.color);
-  Tag.init(this.name, this.color);
+  Tag.init(this.name, this.color) {
+    id = null;
+  }
 
   Tag.fromMap(Map<String, Object?> map) {
     id = map[columnTagId] as int? ?? map[columnId] as int;
