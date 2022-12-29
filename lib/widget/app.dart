@@ -7,7 +7,7 @@ import 'package:your_book_of_friends/widget/friend_page.dart';
 import 'package:your_book_of_friends/widget/tag_page.dart';
 
 import 'add_button.dart';
-import 'app_bar.dart';
+import 'app_bar.dart' as ab;
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -21,7 +21,7 @@ class AppState extends State<App> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(slivers: <Widget>[
-        const MyAppBar(),
+        const ab.AppBar(),
         Consumer<SelectedIndex>(
             builder: (context, selectedIndex, _) =>
                 contents[selectedIndex.index])

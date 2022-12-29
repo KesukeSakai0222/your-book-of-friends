@@ -23,6 +23,7 @@ dependencies:
   provider: ^6.0.3
   collection: ^1.16.0
   flutter_colorpicker: ^1.0.3
+  filter_list: ^1.0.2
 
 dev_dependencies:
   flutter_test:

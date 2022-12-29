@@ -17,6 +17,7 @@
     "color": "color",
     "save": "save",
     "delete": "delete",
+    "select": "select",
 
     "warnRequired": "Required field!"
 }

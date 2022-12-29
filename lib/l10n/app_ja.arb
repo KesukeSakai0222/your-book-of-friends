@@ -17,6 +17,7 @@
     "color": "色",
     "save": "保存",
     "delete": "削除",
+    "select": "選択",
 
     "warnRequired": "必須項目です"
 }

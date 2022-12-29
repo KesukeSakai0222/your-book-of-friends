@@ -4,21 +4,23 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:your_book_of_friends/bloc/friend_bloc.dart';
+import 'package:your_book_of_friends/bloc/tag_bloc.dart';
 import 'package:your_book_of_friends/model/selected_index.dart';
 
-class MyAppBar extends StatefulWidget {
-  const MyAppBar({super.key});
+class AppBar extends StatefulWidget {
+  const AppBar({super.key});
 
   @override
-  State<StatefulWidget> createState() => MyAppBarState();
+  State<StatefulWidget> createState() => AppBarState();
 }
 
-class MyAppBarState extends State<StatefulWidget> {
+class AppBarState extends State<StatefulWidget> {
   bool _isSearchMode = false;
   @override
   Widget build(BuildContext context) {
     var index = Provider.of<SelectedIndex>(context).index;
-    var friendBloc = Provider.of<FriendBloc>(context);
+    final _friendBloc = Provider.of<FriendBloc>(context);
+    final _tagBloc = Provider.of<TagBloc>(context);
     return SliverAppBar(
         title: _isSearchMode
             ? TextField(
@@ -28,11 +30,12 @@ class MyAppBarState extends State<StatefulWidget> {
                 onSubmitted: (value) {
                   switch (index) {
                     case 0:
-                      friendBloc.searchFriends(value);
+                      _friendBloc.searchFriends(value);
                       break;
                     case 1:
                       break;
                     case 2:
+                      _tagBloc.getTags();
                       break;
                   }
                 },
