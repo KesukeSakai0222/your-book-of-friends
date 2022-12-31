@@ -41,9 +41,13 @@ class Friend {
   Friend.fromMap(final List<Map<String, Object?>> records) {
     id = records[0][columnFriendId] as int;
     mainName = records[0][columnMainName] as String;
-    lastDate = records[0][columnLastDate] as DateTime?;
+    lastDate = records[0][columnLastDate] != null
+        ? DateTime.parse(records[0][columnLastDate] as String)
+        : null;
     memo = records[0][columnMemo] as String?;
-    birthday = records[0][columnBirthday] as DateTime?;
+    birthday = records[0][columnBirthday] != null
+        ? DateTime.parse(records[0][columnBirthday] as String)
+        : null;
     isNotify = records[0][columnIsNotify] == 0 ? false : true;
     address = records[0][columnAddress] as String?;
     occupation = records[0][columnOccupation] as String?;
@@ -79,7 +83,7 @@ class Friend {
       columnMainName: mainName,
       columnLastDate: lastDate,
       columnMemo: memo,
-      columnBirthday: birthday,
+      columnBirthday: birthday.toString(),
       columnIsNotify: isNotify ? 1 : 0,
       columnAddress: address,
       columnOccupation: occupation,

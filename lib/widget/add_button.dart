@@ -29,13 +29,8 @@ class AddButtonState extends State<StatefulWidget> {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => MultiProvider(
                       providers: [
-                        Provider(
-                          create: (context) => friendBloc,
-                          dispose: (context, value) => value.dispose(),
-                        ),
-                        Provider(
-                          create: (context) => db,
-                        ),
+                        Provider(create: (context) => friendBloc),
+                        Provider(create: (context) => db),
                       ],
                       child: const FriendAdd(),
                     )));

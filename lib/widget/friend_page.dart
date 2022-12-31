@@ -38,11 +38,21 @@ Widget friendCard(BuildContext context, Friend f) {
       ),
       color: Colors.white,
       child: ListTile(
-        leading: CircleAvatar(
-            child: Text(
-          f.mainName.substring(0, 1),
-          style: const TextStyle(color: Colors.white),
-        )),
-        title: Text(f.mainName),
-      ));
+          leading: CircleAvatar(
+              child: Text(f.mainName.substring(0, 1),
+                  style: const TextStyle(color: Colors.white))),
+          title:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(f.mainName),
+            Wrap(
+                spacing: 2.0,
+                children: f.tags
+                    .map((t) => Chip(
+                          label: Text(t.name,
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 13)),
+                          backgroundColor: Color(t.color),
+                        ))
+                    .toList())
+          ])));
 }

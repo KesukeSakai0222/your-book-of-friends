@@ -9,19 +9,19 @@ import 'package:your_book_of_friends/model/tag.dart' as t;
 
 const coreSqlColumns = """
       select
-        f.id          as friend_id
-      , f.main_name   as main_name
-      , f.last_date   as last_date
-      , f.birthday    as birthday
-      , f.memo        as memo
-      , f.is_notify   as is_notify
-      , f.address     as address
-      , f.occupation  as occupation
-      , n.id          as name_id
-      , n.name        as name
-      , t.id          as tag_id
-      , t.name        as tag_name
-      , t.color       as color
+        f.id                  as friend_id
+      , f.main_name           as main_name
+      , datetime(f.last_date) as last_date
+      , datetime(f.birthday)  as birthday
+      , f.memo                as memo
+      , f.is_notify           as is_notify
+      , f.address             as address
+      , f.occupation          as occupation
+      , n.id                  as name_id
+      , n.name                as name
+      , t.id                  as tag_id
+      , t.name                as tag_name
+      , t.color               as color
       """;
 const coreSqlBody = """
       left join
@@ -95,7 +95,7 @@ class FriendsDao {
           batch.insert(n.tableName, name.setFriendId(id).toMap());
         }
         for (var tag in friend.tags) {
-          batch.insert(t.tableName, tag.toFriendTagsMap(id));
+          batch.insert(t.joinTableName, tag.toFriendTagsMap(id));
         }
         await batch.commit(noResult: true);
       });
